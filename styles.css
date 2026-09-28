@@ -1,0 +1,310 @@
+/* ==========================================================================
+   Aayan Asif — digital resume
+   Layout idea: a typeset paper. Numbered sections, a single serif family,
+   generous margins, one accent colour used only for links.
+   ========================================================================== */
+
+/* --- Design tokens -------------------------------------------------------- */
+:root {
+  --paper:      #fdfdfb;
+  --ink:        #17181a;
+  --ink-soft:   #565a60;
+  --rule:       #d8d6cf;
+  --accent:     #1f3f8f;   /* link blue, borrowed from hyperref defaults */
+  --mark:       #8a2f2f;   /* section numbers only */
+
+  --serif: "Spectral", Georgia, "Times New Roman", serif;
+  --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --measure: 34rem;        /* keeps body text near 70 characters per line */
+  --gap:     1.6rem;
+}
+
+/* Dark theme. Applied by a data attribute so JavaScript can toggle it,
+   and by the media query so it also follows the reader's system setting. */
+:root[data-theme="dark"] {
+  --paper:    #16171a;
+  --ink:      #e9e7e2;
+  --ink-soft: #a2a6ad;
+  --rule:     #34363b;
+  --accent:   #8fb2ff;
+  --mark:     #d98b8b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:    #16171a;
+    --ink:      #e9e7e2;
+    --ink-soft: #a2a6ad;
+    --rule:     #34363b;
+    --accent:   #8fb2ff;
+    --mark:     #d98b8b;
+  }
+}
+
+/* --- Base ----------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 2;
+  -webkit-text-size-adjust: 100%;
+}
+
+p { margin: 0 0 1rem; max-width: var(--measure); }
+ul { max-width: var(--measure); }
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+a:hover { text-decoration-thickness: 2px; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--ink);
+  z-index: 10;
+}
+.skip-link:focus { left: 0.5rem; top: 0.5rem; }
+
+/* --- Masthead ------------------------------------------------------------- */
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.masthead-inner {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: 0.7rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem 1.2rem;
+}
+.masthead-name {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.masthead-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+.masthead-nav a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+}
+.masthead-nav a:hover,
+.masthead-nav a[aria-current="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--mark);
+}
+
+.theme-toggle {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+}
+.theme-toggle:hover { color: var(--ink); border-color: var(--ink-soft); }
+
+/* --- Title block ---------------------------------------------------------- */
+main {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+}
+
+.titleblock {
+  padding: 4.5rem 0 2.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+.titleblock h1 {
+  font-size: clamp(2.6rem, 8vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 1rem;
+}
+.subtitle {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  max-width: 30rem;
+  margin-bottom: 0.9rem;
+}
+.byline {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+.titlelinks {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.4rem;
+  padding: 0;
+  margin: 0 0 2.5rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
+.abstract {
+  border-left: 2px solid var(--mark);
+  padding-left: 1.4rem;
+  max-width: calc(var(--measure) + 1.4rem);
+}
+.abstract h2 {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  margin: 0 0 0.5rem;
+}
+.abstract p { margin-bottom: 0; }
+
+/* --- Sections ------------------------------------------------------------- */
+.section { padding-top: 3.5rem; }
+
+.section > h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+.secnum {
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  color: var(--mark);
+  margin-right: 0.9rem;
+}
+.section-intro { color: var(--ink-soft); margin-bottom: 2rem; }
+
+/* Two-column entries on wide screens: heading in the margin, detail beside it.
+   Collapses to one column on narrow screens. */
+.entry { margin-bottom: 2.2rem; }
+.entry-head { margin-bottom: 0.5rem; }
+.entry h3,
+.project h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.2rem;
+}
+.meta {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.7rem;
+}
+.entry ul { margin: 0; padding-left: 1.1rem; }
+.entry li { margin-bottom: 0.45rem; }
+
+@media (min-width: 52rem) {
+  .entry,
+  .project {
+    display: grid;
+    grid-template-columns: 15rem 1fr;
+    column-gap: var(--gap);
+  }
+  .entry-head { grid-column: 1; margin-bottom: 0; }
+  .entry ul,
+  .entry > p { grid-column: 2; }
+  .project h3,
+  .project .meta { grid-column: 1; }
+  .project > p:not(.meta) { grid-column: 2; }
+  .project .meta { margin-bottom: 0; }
+}
+
+/* --- Projects ------------------------------------------------------------- */
+.project {
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--rule);
+}
+.project:last-of-type { border-bottom: none; }
+.takeaway { color: var(--ink-soft); font-style: italic; }
+.links { font-family: var(--mono); font-size: 0.85rem; margin-bottom: 0; }
+
+/* --- Skills --------------------------------------------------------------- */
+.skills { margin: 0 0 2.5rem; }
+.skills dt {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-top: 1rem;
+}
+.skills dd { margin: 0.2rem 0 0; max-width: var(--measure); }
+
+@media (min-width: 52rem) {
+  .skills {
+    display: grid;
+    grid-template-columns: 15rem 1fr;
+    column-gap: var(--gap);
+  }
+  .skills dt { margin-top: 0.75rem; }
+  .skills dd { margin-top: 0.75rem; }
+}
+
+/* --- Contact and footer --------------------------------------------------- */
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  line-height: 2;
+}
+
+.colophon {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+.colophon p { margin-bottom: 0.3rem; }
+.updated { font-family: var(--mono); font-size: 0.75rem; }
+
+/* --- Print: fall back to something close to the paper resume -------------- */
+@media print {
+  .masthead, .skip-link, .theme-toggle { display: none; }
+  body { font-size: 10.5pt; color: #000; background: #fff; }
+  a { color: #000; text-decoration: none; }
+  .titleblock { padding-top: 0; }
+  .section { padding-top: 1.2rem; }
+  .project { break-inside: avoid; }
+}
